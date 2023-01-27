@@ -59,7 +59,30 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       
       if (!user) {
         throw reply.code(400);
-      }      
+      }
+      
+      const subscription = await fastify.db.users.findMany({key: "subscribedToUserIds", inArray: usertId});
+      
+      if (subscription) {
+        subscription.map(async subscr => {
+          await fastify.db.users.change(subscr.id, {
+            subscribedToUserIds: [...subscr.subscribedToUserIds.filter(el => el != usertId)]
+          });
+        });
+      }
+
+      const profile = await fastify.db.profiles.findOne({key: "userId", equals: usertId});
+      
+      if (profile) {
+        await fastify.db.profiles.delete(profile.id);
+      }
+
+      const post = await fastify.db.posts.findOne({key: "userId", equals: usertId});
+      
+      if (post) {
+        await fastify.db.posts.delete(post.id);
+      }
+
       user = await fastify.db.users.delete(usertId);
       return user;
     }
