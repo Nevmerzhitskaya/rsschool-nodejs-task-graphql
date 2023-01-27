@@ -41,8 +41,8 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<UserEntity> {
-      const userCreated = await fastify.db.users.create(request.body);
-      return userCreated;
+      const user = await fastify.db.users.create(request.body);
+      return user;
     }
   );
 
@@ -87,7 +87,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
           subscribedToUserIds: [...user.subscribedToUserIds, targetId]
         });
       }
-      console.log(targetId,usertId);
+      
       return user;
     }
   );
