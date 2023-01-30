@@ -48,7 +48,7 @@ If the properties of the entity are not specified, then return the id of it.
    2.2. Get user, profile, post, memberType by id - 4 operations in one query.  
    ```
 query ($id: String) {
-	memberTypes {
+	memberTypes (id: $id) {
 		id
 		discount
 		monthPostsLimit
@@ -60,7 +60,7 @@ query ($id: String) {
 		email
 		subscribedToUserIds
 	}
-	profile (userId: $id) {
+	profile (id: $id) {
 		id
 		avatar
 		sex
@@ -71,7 +71,7 @@ query ($id: String) {
 		memberTypeId
 		userId
 	}
-	post (userId: $id) {
+	post (id: $id) {
 		id
 		title
 		content

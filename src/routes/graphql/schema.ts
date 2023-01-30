@@ -1,4 +1,8 @@
 import { GraphQLInt, GraphQLList, GraphQLObjectType, GraphQLString } from "graphql";
+import { MemberTypeEntity } from "../../utils/DB/entities/DBMemberTypes";
+import { PostEntity } from "../../utils/DB/entities/DBPosts";
+import { ProfileEntity } from "../../utils/DB/entities/DBProfiles";
+import { UserEntity } from "../../utils/DB/entities/DBUsers";
 
 export const graphqlBodySchema = {
   type: 'object',
@@ -116,9 +120,9 @@ export const query = new GraphQLObjectType({
         id: { type: GraphQLString }
       },
       resolve: async (root, args, context, info) => {
-        const user = await context.db.users.findOne({ key: "id", equals: String(args.id) });
+        const user: UserEntity = await context.db.users.findOne({ key: "id", equals: String(args.id) });
         if (!user) {
-          throw new Error('404');
+          throw context.httpErrors.notFound('404');
         }         
         return user;
       }
@@ -129,7 +133,11 @@ export const query = new GraphQLObjectType({
         id: { type: GraphQLString }
       },
       resolve: async (root, args, context, info) => {
-        return await context.db.posts.findOne({ key: "userId", equals: String(args.id) });
+        const post: PostEntity = await context.db.posts.findOne({ key: "id", equals: String(args.id) });
+        if (!post) {
+          throw context.httpErrors.notFound('404');
+        }           
+        return post;
       }
     },
     profile: {
@@ -138,7 +146,24 @@ export const query = new GraphQLObjectType({
         id: { type: GraphQLString }
       },
       resolve: async (root, args, context, info) => {
-        return await context.db.profiles.findOne({ key: "userId", equals: String(args.id) });
+        const profile: ProfileEntity = await context.db.profiles.findOne({ key: "id", equals: String(args.id) });
+        if (!profile) {
+          throw context.httpErrors.notFound('404');
+        }                 
+        return profile;
+      }
+    },
+    memberType: {
+      type: memberTypesSchema,
+      args: {
+        id: { type: GraphQLString }
+      },
+      resolve: async (root, args, context, info) => {
+        const memberTypes: MemberTypeEntity = await context.db.users.findOne({ key: "id", equals: String(args.id) });
+        if (!memberTypes) {
+          throw context.httpErrors.notFound('404');
+        }                
+        return memberTypes;
       }
     }
   },

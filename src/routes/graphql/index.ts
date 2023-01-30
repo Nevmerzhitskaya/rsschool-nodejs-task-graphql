@@ -20,11 +20,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
     },
     async function (request, reply) {
 
-
- 
-
       const schema = new GraphQLSchema({query});
-      // const source = new Gra
       return await graphql({schema, source: request.body.query || '', variableValues: request.body.variables, contextValue: fastify});
 
     }
